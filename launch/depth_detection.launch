@@ -1,0 +1,6 @@
+<!--basic launch file-->
+<launch>
+    <node pkg="depth_detection" type="depth_detection" name="depth_detection" >
+      
+    </node>
+</launch>
