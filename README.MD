@@ -14,5 +14,6 @@ Launch the software by using `roslaunch depth_detection depth_detection.launch`
 * `/uav1/camera/depth` (sensor_msgs::Image)
 
 ## Maintainer
-Christoph Endner - christoph@ducklabs.de
-Tobias Maier - me@maiertobi.de
+Christoph Endner - christoph@ducklabs.de (mainly code)
+
+Tobias Maier - me@maiertobi.de (setup scripts)
