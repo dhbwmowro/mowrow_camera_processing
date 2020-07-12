@@ -8,12 +8,7 @@
 #include <ros/console.h>
 
 #include <opencv2/opencv.hpp>
-//#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-//#include <sensor_msgs/image_encodings.h>
-//#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
-//#include <opencv2/imgproc/imgproc.hpp>
-//#include <iostream>
 #include <cv_bridge/cv_bridge.h>
 #include "depth_detection/depth_detection.h"
 #include <message_filters/subscriber.h>
@@ -138,9 +133,6 @@ void Depth_Detection::publishDepthVector(sensor_msgs::Image img)
        out.push_back(max);
     }
 
-      // out.convertTo(inimg, CV_16UC1);
-      // cv::FileStorage file("/home/christoph/dhbw/Rasenmaeher/kamera/out.txt", cv::FileStorage::WRITE);
-      // file << "Vector" << out;
      cv_bridge::CvImage imgout;
         imgout.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
         imgout.header.frame_id = "/uav1/camera/depth";
