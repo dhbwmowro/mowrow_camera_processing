@@ -6,13 +6,9 @@
  */
 
 #include "ros/ros.h"
-//#include "std_msgs/String.h"
 #include "sensor_msgs/Image.h"
 #include <sensor_msgs/image_encodings.h>
-//#include <librealsense2/h/rs_pipeline.h>
-//#include <librealsense2/rs.hpp>
 #include <image_transport/image_transport.h>
-//#include <tf/transform_broadcaster.h>
 
 #include <sstream>
 
