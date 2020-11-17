@@ -8,7 +8,12 @@
 #include <ros/console.h>
 
 #include <opencv2/opencv.hpp>
+//#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+//#include <sensor_msgs/image_encodings.h>
+//#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
+//#include <opencv2/imgproc/imgproc.hpp>
+//#include <iostream>
 #include <cv_bridge/cv_bridge.h>
 #include "depth_detection/depth_detection.h"
 #include <message_filters/subscriber.h>
@@ -59,73 +64,73 @@ void Depth_Detection::publishDepthVector(sensor_msgs::Image img)
 
     cv::Mat persons(depth.rows, depth.cols, CV_8UC1); //Matrix to safe obstacle classes
     
-    for (int x = 0; x < segmented.cols; x++)
+    for (int y = 0; y < segmented.cols; y++)
     {
-      for (int y = 0; y < segmented.rows; y++)
+      for (int x = 0; x < segmented.rows; x++)
       { 
         double current_depth = depth.at<double>(x,y); //speed up processing by static adressing
-        if(segmented.at<int>(x,y,0)==person && ((x+cx)*current_depth/f) && persons.at<int>(x,y) != 0){  //Start of Person and Height in rover range
-          if(persons.at<int>(x,y-1) == 1 && depth.at<double>(x,y-1) < current_depth){
+        if(segmented.at<int>(x,y,0)==person && ((y+cy)*current_depth/f) && persons.at<int>(x,y) != 0){  //Start of Person and Height in rover range
+          if(persons.at<int>(x-1,y) == 1 && depth.at<double>(x-1,y) < current_depth){
           current_depth = current_depth + paddingperson;                  // Just add padding if left pixel is larger and already added padding
           }else{
-            double pstart = ((y+cy)*current_depth/f) - paddingperson;           //Get the outer bound of left safty radius (world)
-            int startp = nearbyint((pstart*f/current_depth)-cy);               //Get coordinate of outer bound
+            double pstart = ((x+cx)*current_depth/f) - paddingperson;           //Get the outer bound of left safty radius (world)
+            int startp = nearbyint((pstart*f/current_depth)-cx);               //Get coordinate of outer bound
               if(startp> 0){                                                          //Check if coordinsate is in picture bound                                        
-                if(depth.at<double>(x,startp) > current_depth){              //Checks if current value is larger (further away) new value
-                  depth.at<double>(x,startp) = current_depth;               //Set new value
-                  persons.at<int>(x,startp) = 1;                                   //Mark pixel as person
+                if(depth.at<double>(startp,y) > current_depth){              //Checks if current value is larger (further away) new value
+                  depth.at<double>(startp,y) = current_depth;               //Set new value
+                  persons.at<int>(startp,y) = 1;                                   //Mark pixel as person
                 }
               }else{
                 startp = 0;
               }
-              for(int i = startp+1 ; i < y; i++){
-                double ne = depth.at<double>(x,i) - sqrt(pow(paddingperson,2)-pow(((x+cx)*depth.at<double>(x,i)/f)-((x+cx)*current_depth/f),2))+((i+cy)*depth.at<double>(x,i)/f);  //Caclulates the new distance  
-                if(ne < depth.at<double>(x,i)){
-                  depth.at<double>(x,i) = ne;            //Set new value
-                  persons.at<int>(x,i) = 1;              //Mark pixel as occupied
+              for(int i = startp+1 ; i < x; i++){
+                double ne = depth.at<double>(i,x) - sqrt(pow(paddingperson,2)-pow(((y+cy)*depth.at<double>(i,x)/f)-((y+cy)*current_depth/f),2))+((i+cx)*depth.at<double>(i,y)/f);  //Caclulates the new distance  
+                if(ne < depth.at<double>(i,y)){
+                  depth.at<double>(i,y) = ne;            //Set new value
+                  persons.at<int>(i,y) = 1;              //Mark pixel as occupied
                 }
               } 
             }
           persons.at<int>(x,y) = 1;               //Mark pixel as occupied
-          if(persons.at<int>(x,y+1) != 0){        //Check if person occupied area is over
-            double pend = ((y+cy)*current_depth/f) + paddingperson; 
-            int endp = nearbyint((pend*f/current_depth)-cy);
+          if(persons.at<int>(x+1,y) != 0){        //Check if person occupied area is over
+            double pend = ((x+cx)*current_depth/f) + paddingperson; 
+            int endp = nearbyint((pend*f/current_depth)-cx);
             if(endp < segmented.rows){                                       //Check if coordinsate is in picture bound  
-              if(depth.at<double>(x,endp) > current_depth && persons.at<int>(x,endp) != 1){          //Checks if current value is larger (further away) new value
-                depth.at<double>(x,endp) = current_depth;            //Set new value
-                persons.at<int>(x,endp) = 1;                                //Mark pixel as person
+              if(depth.at<double>(endp,y) > current_depth && persons.at<int>(endp, y) != 1){          //Checks if current value is larger (further away) new value
+                depth.at<double>(endp,y) = current_depth;            //Set new value
+                persons.at<int>(endp,y) = 1;                                //Mark pixel as person
               }
             }else{
               endp = segmented.rows;
             }    
-            for(int i = y+1 ; i < endp +1; i++){
-              if(persons.at<int>(x,i) == 1 && current_depth < depth.at<double>(x,i)){         //Checks if there is a another person closer to the rover. if true the radius does not be calculated yet
+            for(int i = x+1 ; i < endp +1; i++){
+              if(persons.at<int>(i, y) == 1 && current_depth < depth.at<double>(i,y)){         //Checks if there is a another person closer to the rover. if true the radius does not be calculated yet
                 i = endp + 1;                                                                         //Break the for i -loop
               }else{
-                double ne = depth.at<double>(x,i) - sqrt(pow(paddingperson,2)-pow(((x+cx)*depth.at<double>(x,i)/f)-((x+cx)*current_depth/f),2))+((i+cy)*depth.at<double>(x,i)/f); //Caclulates the new distance   
-                if(ne < depth.at<double>(x,i)){          //Check if new value is closer
-                  depth.at<double>(x,i) = ne;            //Set new value
-                  persons.at<int>(x,i) = 1;              //Mark pixel as occupied
-                }//end if(ne < depth.at<double>(x,i))
-              }  //end else(persons.at<int>(x,i) == 1 && depth.at<double>(x,y) < depth.at<double>(x,i))
+                double ne = depth.at<double>(i,y) - sqrt(pow(paddingperson,2)-pow(((y+cy)*depth.at<double>(i,y)/f)-((y+cy)*current_depth/f),2))+((i+cx)*depth.at<double>(i,y)/f); //Caclulates the new distance   
+                if(ne < depth.at<double>(i,y)){          //Check if new value is closer
+                  depth.at<double>(i,y) = ne;            //Set new value
+                  persons.at<int>(i,x) = 1;              //Mark pixel as occupied
+                }//end if(ne < depth.at<double>(i,x))
+              }  //end else(persons.at<int>(i,x) == 1 && depth.at<double>(x,y) < depth.at<double>(i,x))
             }    //end for i                                                                           
-          }      //end if(persons.at<int>(x,y+1) != 0)
-        }        //end if(segmented.at<int>(x,y,0)==person && ((x+cx)*depth.at<double>(x,y)/f) && persons.at<int>(x,y) != 0)
+          }      //end if(persons.at<int>(x+1,y) != 0)
+        }        //end if(segmented.at<int>(x,y,0)==person && ((y+cy)*depth.at<double>(x,y)/f) && persons.at<int>(x,y) != 0)
         depth.at<double>(x,y)= current_depth;
-      }          //end for y
-    }            //end for x
+      }          //end for x
+    }            //end for y
  
 
 
   cv::Mat out;
 
-  for (int y = 0; y < segmented.rows; y++)
+  for (int x = 0; x < segmented.rows; x++)
     {
       double max = 0;
       cv::Mat temp;
-      for (int x = 0; x < segmented.cols; x++)
+      for (int y = 0; y < segmented.cols; y++)
       {
-        if(segmented.at<cv::Vec3b>(x,y)[1] != grass && ((x+cx)*depth.at<double>(x,y)/f) < 120){
+        if(segmented.at<cv::Vec3b>(x,y)[1] != grass && ((y+cy)*depth.at<double>(x,y)/f) < 120){
            temp.push_back(depth.at<double>(x,y));
         }
       }
@@ -133,6 +138,9 @@ void Depth_Detection::publishDepthVector(sensor_msgs::Image img)
        out.push_back(max);
     }
 
+      // out.convertTo(inimg, CV_16UC1);
+      // cv::FileStorage file("~/out.txt", cv::FileStorage::WRITE);
+      // file << "Vector" << out;
      cv_bridge::CvImage imgout;
         imgout.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
         imgout.header.frame_id = "/uav1/camera/depth";
@@ -151,8 +159,8 @@ void Depth_Detection::publishLaserscan(cv::Mat in){
   scan_msg.header.frame_id = "/uav1/camera/depth";
   scan_msg.header.seq = seq;
   scan_msg.header.stamp = ros::Time::now();
-  scan_msg.angle_min = angle_between_rays(0, in.at<double>(0), cy, in.at<double>(cy));
-  scan_msg.angle_max = angle_between_rays( in.cols -1, in.at<double>(in.cols -1), cy, in.at<double>(cy));
+  scan_msg.angle_min = angle_between_rays(0, in.at<double>(0), cx, in.at<double>(cx));
+  scan_msg.angle_max = angle_between_rays( in.cols -1, in.at<double>(in.cols -1), cx, in.at<double>(cx));
   scan_msg.angle_increment = (scan_msg.angle_max - scan_msg.angle_min) / in.cols;
   scan_msg.range_min = 0.1;
   scan_msg.range_max = 10;
@@ -162,7 +170,7 @@ void Depth_Detection::publishLaserscan(cv::Mat in){
 }
 
 double Depth_Detection::angle_between_rays(int y1, double z1, int y2, double z2){
-  double d = abs(((y1+cy)*z1/f)-((y2+cy)*z2/f));
+  double d = abs(((x1+cx)*z1/f)-((x2+cx)*z2/f));
   return atan2(z2, d);
 }
 
