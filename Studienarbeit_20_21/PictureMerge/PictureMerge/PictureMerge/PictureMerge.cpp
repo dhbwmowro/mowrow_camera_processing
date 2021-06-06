@@ -7,9 +7,18 @@
 
 int main()
 {
-    std::cout << "Hello World!\n";
+   //Open Pictures
+
+	cv::Mat im1 = cv::imread("C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge");
+	cv::Mat im2 = cv::imread("C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge");
+
 }
 
+void PictureMerge::mergePictures() {
 
+}
+void PictureMerge::savePictures() {
+
+}
 
 
