@@ -10,12 +10,12 @@
 class PictureMerge{
 
 public:
-	PictureMerge(cv::Mat im1, cv::Mat im2) :im1(im1), im2(im2) {};
+	PictureMerge(cv::Mat, cv::Mat);
 
 private:
 
-	cv::Mat im1;
-	cv::Mat im2;
+	cv::Mat imP;
+	cv::Mat imU;
 
 	void mergePictures();
 	void savePictures();
