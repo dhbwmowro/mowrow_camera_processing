@@ -11,6 +11,9 @@ Processing::Processing(cv::Mat im):image(im) {
 void Processing::findPersons() {
 	//rows and cols
 	pixelmap = std::vector<std::vector<Pixel>>();
+	pixelmap.resize(image.rows);
+	for (int i = 0; i < image.rows; ++i)
+		pixelmap[i].resize(image.cols);
 
 	//Fill pixelmap
 	for(int x = 0; x<image.cols; x++)
@@ -25,6 +28,7 @@ void Processing::findPersons() {
 			}
 			pixelmap[x][y] = p;
 
+
 		}
 	}
 
@@ -32,6 +36,7 @@ void Processing::findPersons() {
 		for (Pixel pixel : vec) {
 			if (pixel.isPerson) {
 				pixel.marked = true;
+				persons.push_back(Person(image.cols, image.rows));
 				floodfill(pixel.x, pixel.y);
 			}
 		}

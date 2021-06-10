@@ -7,6 +7,7 @@
 #include <opencv2/core.hpp>
 #include <vector>
 #include "Pixel.h"
+#include "Person.h"
 
 class Processing
 {
@@ -17,6 +18,7 @@ public:
 private:
 	cv::Mat image;
 	std::vector<std::vector<Pixel>> pixelmap;
+	std::vector<Person> persons;
 
 	void floodfill(int x, int y);
 	void findPersons();
