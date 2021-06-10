@@ -8,47 +8,58 @@
 int main()
 {
    //Open Pictures
+	std::cout << "Hello World" << std::endl;
+	std::string pathP = "C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge\\PTest1.png"; //C:\Users\debinkli\Documents\DHBW\Studienarbeit\PictureMerge
+	std::string pathU = ".\\UTest1.png";//"C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge\\UTest1.png";
+	cv::Mat imP = cv::imread(pathP);
+	cv::Mat imU = cv::imread(pathU, cv::IMREAD_COLOR);
 
-	cv::Mat im1 = cv::imread("C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge\\PTest1.png");
-	cv::Mat im2 = cv::imread("C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge\\UTest1.png");
 
-	PictureMerge p = PictureMerge(im1, im2);
+	if (imU.empty())
+	{
+		std::cout << "Could not read the image: " << std::endl;
+		return 1;
+	}
+
+	//cv::imshow("Display window", imP);
+	PictureMerge p = PictureMerge(imP, imU);
 }
 
 
-PictureMerge::PictureMerge(cv::Mat imPerson, cv::Mat imUmgebung) :imP(imPerson), imU(imUmgebung) {
+PictureMerge::PictureMerge(cv::Mat imP, cv::Mat imU) :imP(imP), imU(imU) {
 
 	mergePictures();
-	savePictures();
+	//savePictures();
 
 }
 
 
 void PictureMerge::mergePictures() {
 
-	if (imP.rows== imU.rows&& imP.cols== imU.cols) {
+	//if (imP.rows== imU.rows&& imP.cols== imU.cols) {
 
-		int rows = imP.rows;
-		int cols = imP.cols;
+	//	int cols = imP.cols;
+	//	int rows = imP.rows;
+	//	
 
-		for (int x = 0; x <= rows; x++) {
-			for (int y = 0; y <= cols; y++) {
-				//Check color
-				cv::Vec3b bgrP = imP.at<cv::Vec3b>(x, y);
-				if (bgrP[0]==60&& bgrP[1]==20 && bgrP[2]==220) {
+	//	for (int x = 0; x <= cols; x++) {
+	//		for (int y = 0; y <= rows; y++) {
+	//			//Check color
+	//			cv::Vec3b bgrP = imP.at<cv::Vec3b>(x, y);
+	//			if (bgrP[0]==60&& bgrP[1]==20 && bgrP[2]==220) {
 
-					imU.at<cv::Vec3b>(x, y) = imP.at<cv::Vec3b>(x, y);
-				}
+	//				imU.at<cv::Vec3b>(x, y) = imP.at<cv::Vec3b>(x, y);
+	//			}
 
-			}
-		}
-	}
+	//		}
+	//	}
+	//}
 
 
 }
 void PictureMerge::savePictures() {
 
-	imwrite("C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge\\Merged\\Test1.png", imU);
+	//cv::imwrite("C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge\\Merged\\Test1.png", imU);
 }
 
 

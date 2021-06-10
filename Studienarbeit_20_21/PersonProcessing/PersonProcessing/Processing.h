@@ -3,6 +3,11 @@
 #ifndef PROCESSING_H
 #define PROCESSING_H
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <vector>
+#include "Pixel.h"
+
 class Processing
 {
 
@@ -11,7 +16,9 @@ public:
 
 private:
 	cv::Mat image;
-	void floodfill();
+	std::vector<std::vector<Pixel>> pixelmap;
+
+	void floodfill(int x, int y);
 	void findPersons();
 
 
