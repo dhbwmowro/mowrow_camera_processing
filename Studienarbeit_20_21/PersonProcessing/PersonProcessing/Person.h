@@ -20,7 +20,7 @@ private:
 
 	int cols;
 	int rows;
-
+	void init();
 
 };
 #endif

@@ -3,11 +3,9 @@
 #ifndef PICTURE_MERGE_H
 #define PICTURE_MERGE_H
 
-//#include <opencv2/core/mat.hpp>
-#include <opencv2/opencv.hpp>
-//#include <opencv2/core.hpp>
-//#include <opencv2/imgcodecs.hpp>
-//#include <opencv2/highgui.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
 
 
 class PictureMerge{
@@ -19,7 +17,7 @@ private:
 
 	cv::Mat imP;
 	cv::Mat imU;
-
+	
 	void mergePictures();
 	void savePictures();
 
