@@ -7,6 +7,8 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
+#include "opencv2/imgproc.hpp"
+
 
 
 class NoiseFilter
@@ -16,11 +18,12 @@ public:
 
 private:
 
-	cv::Mat imP;
-	cv::Mat imU;
+	cv::Mat img;
+	int MAX_KERNEL_LENGTH = 31;
 
-	void mergePictures();
-	void savePictures();
+
+	void filter();
+	void saveImage();
 
 
 };
