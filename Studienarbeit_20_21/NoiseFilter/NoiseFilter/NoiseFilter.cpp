@@ -28,24 +28,17 @@ NoiseFilter::NoiseFilter(cv::Mat img):img(img) {
 
 void NoiseFilter::filter() {
 
-	for (int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2)
-	{
-		cv::medianBlur(img, dst, i);
-		if (display_dst(DELAY_BLUR) != 0)
-		{
-			return;
-		}
-	}
-	
+		cv::medianBlur(img, dst, 5);
+
 
 }
-int NoiseFilter::display_dst(int delay)
-{
-	//cv::imshow(window_name, dst);
-	int c = cv::waitKey(delay);
-	if (c >= 0) { return -1; }
-	return 0;
-}
+//int NoiseFilter::display_dst(int delay)
+//{
+//	//cv::imshow(window_name, dst);
+//	int c = cv::waitKey(delay);
+//	if (c >= 0) { return -1; }
+//	return 0;
+//}
 
 void NoiseFilter::saveImage() {
 

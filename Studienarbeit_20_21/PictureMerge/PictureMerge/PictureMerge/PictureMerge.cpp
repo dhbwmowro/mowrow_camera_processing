@@ -28,8 +28,11 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
+		std::vector<cv::Mat> images;
+		images.push_back(imU);
+		images.push_back(imP);
 		//cv::imshow("Display window", imP);
-		PictureMerge p = PictureMerge(imP, imU);
+		PictureMerge p = PictureMerge(images);
 		return 0;
 
 	}
@@ -41,8 +44,9 @@ int main(int argc, char** argv)
 }
 
 
-PictureMerge::PictureMerge(cv::Mat imP, cv::Mat imU) :imP(imP), imU(imU) {
+PictureMerge::PictureMerge(std::vector<cv::Mat> images) :images(images) {
 
+	
 	mergePictures();
 	//savePictures();
 
@@ -51,21 +55,26 @@ PictureMerge::PictureMerge(cv::Mat imP, cv::Mat imU) :imP(imP), imU(imU) {
 
 void PictureMerge::mergePictures() {
 
-	if (imP.rows== imU.rows&& imP.cols== imU.cols) {
+	if (checkImages()) {
 
-		int cols = imP.cols;
-		int rows = imP.rows;
+		int cols = images[0].cols;
+		int rows = images[0].rows;
 		
+		newImage.cols = cols;
+		newImage.rows = rows;
 
-		for (int x = 0; x <= cols; x++) {
-			for (int y = 0; y <= rows; y++) {
-				//Check color
-				cv::Vec3b bgrP = imP.at<cv::Vec3b>(x, y);
-				if (bgrP[0]==60&& bgrP[1]==20 && bgrP[2]==220) {
+		
+		for (cv::Mat img : images) {
+			for (int x = 0; x <= cols; x++) {
+				for (int y = 0; y <= rows; y++) {
+					//Check color
+					cv::Vec3b bgr = img.at<cv::Vec3b>(x, y);
+					if (checkColor(bgr)) {
+						
+						newImage.at<cv::Vec3b>(x, y) = img.at<cv::Vec3b>(x, y);
+					}
 
-					imU.at<cv::Vec3b>(x, y) = imP.at<cv::Vec3b>(x, y);
 				}
-
 			}
 		}
 	}
@@ -77,4 +86,23 @@ void PictureMerge::savePictures() {
 	cv::imwrite("C:\\Users\\debinkli\\Documents\\DHBW\\Studienarbeit\\PictureMerge\\Merged\\Test1.png", imU);
 }
 
+bool PictureMerge::checkImages() {
+	int cols = images[0].cols;
+	int rows = images[0].rows;
+	for (cv::Mat img : images) {
+		if (img.cols != cols || img.rows != rows) {
+			return false;
+		}
+	}
+	return true;
+}
 
+bool PictureMerge::checkColor(cv::Vec3b bgr) {
+	//true when color isnt black (0,0,0)
+	if (bgr[0] != 0 && bgr[1] != 0 && bgr[2] != 0) {
+		return true;
+	}
+	return false;
+
+
+}

@@ -6,21 +6,24 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
+#include <vector>
 
 
 class PictureMerge{
 
 public:
-	PictureMerge(cv::Mat, cv::Mat);
+	PictureMerge(std::vector<cv::Mat> images);
 
 private:
 
-	cv::Mat imP;
-	cv::Mat imU;
+	std::vector<cv::Mat> images;
+	cv::Mat newImage;
 	
 	void mergePictures();
 	void savePictures();
 
+	bool checkImages();
+	bool checkColor(cv::Vec3b bgr);
 
 };
 

@@ -19,7 +19,12 @@ public:
 private:
 
 	cv::Mat img;
+	cv::Mat dst;
 	int MAX_KERNEL_LENGTH = 31;
+	int DELAY_BLUR = 100;
+
+
+	int display_dst(int delay);
 
 
 	void filter();
